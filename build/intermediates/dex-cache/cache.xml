@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\cardview-v7\22.1.1\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="22886d910315028a2b34b1ba068c265534ade87a">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\pre-dexed\release\classes-3609a2bbb50a8e8e17223e7b1b44b8e7ad7ae24a.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\22.1.1\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="e0b0c35d02308b270015a74cada4887e2e49b889">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\pre-dexed\release\classes-44ec2535922a06811b7ad81de451f8a7ac7e4c0e.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.1.1\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="c95ba8152923e4872e86a82cfcba9a51c0214328">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\pre-dexed\release\classes-73cead8d34cefdfd0dc2a6d6f3b9f70d554fdc59.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.1.1\jars\libs\internal_impl-22.1.1.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="9e070ad32b2700b0343e8e0cccc437733d91ba3a">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\pre-dexed\release\internal_impl-22.1.1-65c2cbbc55129071d50671cdddea7655454820d8.jar" />
+    </item>
+    <item
+        jar="D:\Android sdk\extras\android\m2repository\com\android\support\support-annotations\22.1.1\support-annotations-22.1.1.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="01d051a6bfb1218b1db2d3a5af0480ac2c25c42a">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\pre-dexed\release\support-annotations-22.1.1-de56e42966f4cfcdf7b11928c0c930fbe2eb604a.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.1.1\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="a3ff3c506644c820eb2bdf06e8339f72be578551">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\pre-dexed\release\classes-d767bab08eceee9fa75672fb3f47a5371b2e8503.jar" />
+    </item>
+
+</items>
