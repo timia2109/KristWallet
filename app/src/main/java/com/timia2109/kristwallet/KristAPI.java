@@ -92,7 +92,7 @@ public class KristAPI implements Serializable {
     public TransferResults sendKrist(long amount, String recipient) throws IOException {
         if (address == recipient)
             return TransferResults.SelfSend;
-        switch (HTTP.readURL(remoteAPI+"?pushtx2&q=" + recipient + "&pkey=" + key + "&amt=" + amount)) {
+        switch (HTTP.readURL(remoteAPI+"?pushtx2&q=" + recipient + "&pkey=" + getKey() + "&amt=" + amount)) {
             case "Success": {
                 return TransferResults.Success;
             }

@@ -25,7 +25,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     static String bUrl = "http://ceriat.net/krist";
     static String updateGradle = "https://raw.githubusercontent.com/timia2109/KristWallet/master/app/build.gradle";
-    static String updateURL = "https://raw.githubusercontent.com/timia2109/KristWallet/master/app/build/outputs/apk/app-debug.apk";
+    static String updateURL = "https://timia2109.com/kristWallet.apk";
 
     private RecyclerView rv;
     private LinearLayoutManager mLayoutManager;

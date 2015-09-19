@@ -58,7 +58,7 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
             color = Color.GREEN;
         }
         else {
-            String info = ((transactions[i].plus()) ? "-> .h" : "<- ");
+            String info = ((transactions[i].plus()) ? "-> " : "<- ");
             holder.kristID.setText(info+transactions[i].getAddr());
             if (transactions[i].plus())
                 color = Color.GREEN;
