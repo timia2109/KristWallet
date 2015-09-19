@@ -1,5 +1,5 @@
 # KristWallet
-A Krist Wallet for Android
+A Krist Wallet for Android **[Download Here!](http://timia2109.com/kristWallet.apk")**
 
 **This App uses classes of [Apemanzilla's KWallet](https://github.com/apemanzilla/KWallet)**
 
@@ -8,9 +8,6 @@ A Krist Wallet for Android
  - Check your Transactions
  - Save multiple Krist Wallets
  - Send Krists
-
-## Download
-[Here!](http://raw.github.com/timia2109/KristWallet/master/app/build/outputs/apk/app-debug.apk")
 
 ### Important
 This is my first Android App and it can contain Bugs, etc. It's not perfect, but we can make it perfect! Report issues, (fix my broken english), tell me what can be better or send me ideas!
