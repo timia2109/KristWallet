@@ -1,5 +1,5 @@
 # KristWallet
-A Krist Wallet for Android **[Download Here!](http://timia2109.com/kristWallet.apk")**
+A Krist Wallet for Android **[Download Here!](http://timia2109.com/kristWallet.apk)**
 
 **This App uses classes of [Apemanzilla's KWallet](https://github.com/apemanzilla/KWallet)**
 
