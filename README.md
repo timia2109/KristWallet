@@ -21,6 +21,13 @@ This is my first Android App and it can contain Bugs, etc. It's not perfect, but
  - Import [Yivanos KristMiner](https://github.com/Yevano/ytci-krist-miner) so that you mobile can mine.
  - Send Krists over Bluetooth or NFC
  - Fix the Date Error
+ - Use R.string.* to translate the App
+ - "Are you shure"-Dialog for send Krists
+ - Import Updates notes
+ - Contributors screen (old (thanks!) and new)
+ - Auto-delete APK from Downloads (need android.permisson.WRITE_EXTERNAL_STORAGE)
+ - Choose Address in "Transfere"-Screen to transfere Krists between your accounds
+ - **Write me your Ideas!**
 
 Thank you for reading!
 timia2109
