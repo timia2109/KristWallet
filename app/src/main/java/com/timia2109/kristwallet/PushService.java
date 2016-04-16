@@ -16,47 +16,91 @@ public class PushService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        intent.putExtra("dummy",true);
-        PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
-        try {
-            KristAPI k = new KristAPI(MainActivity.bUrl, "0");
-            String kWalls = "";
-            String[] apis = intent.getStringExtra("apis").split(";");
-            long all = 0;
-            int len = apis.length-1;
+        Saver saver = (Saver) intent.getSerializableExtra("saver");
+        KristAPI[] apis = saver.apis;
 
-            for (int i = 0; i <= len; i++) {
-                long budget = k.getBalance(apis[i]);
+        if (apis == null || apis.length == 0)
+            stopSelf();
+
+        try {
+            long all = 0;
+            String lastSnap = intent.getStringExtra("snapshot");
+            int len = apis.length;
+            StringBuilder kWalls = new StringBuilder();
+
+            for (int i = 0; i < len; i++) {
+                long budget = apis[i].getBalance();
+                long diffToLast = budget-intent.getLongExtra("last"+i,budget);
                 all += budget;
-                kWalls += apis[i]+": \t\t"+budget+" KST";
-                if (i != len)
-                    kWalls += "\n";
+                kWalls.append( apis[i].getName() )
+                        .append(": \t\t")
+                        .append(budget)
+                        .append( KristAPI.currency );
+                if (diffToLast != 0) {
+                    if (diffToLast > 0)
+                        kWalls.append(" (+ ");
+                    else if (diffToLast < 0)
+                        kWalls.append(" (- ");
+                    kWalls.append(Math.abs(diffToLast)).append(")");
+                }
+                kWalls.append( "\n" );
+                if (lastSnap == null)
+                    intent.putExtra("last"+i, budget);
             }
 
-            Date d = new Date();
+            Intent snapshot = new Intent(intent);
+            if (intent == snapshot)
+                System.out.println("ERROR ON PUSH SERVICE intent==snapshot");
+            String snapshotTitle;
+            String snapshotDate = "";
 
-            int notificationId = 001;
+            if (lastSnap != null) {
+                //There is a snapshot
+                snapshot.removeExtra("snapshot");
+                snapshotTitle = getString(R.string.removeSnapshot);
+                snapshotDate = "\n"+getString(R.string.snapshotTime)+lastSnap;
+            }
+            else {
+                //There is no Snapshot
+                snapshot.putExtra("snapshot", Saver.stringifyDate(new Date(), saver, this));
+                snapshotTitle = getString(R.string.snapshot);
+            }
+
+            String dateString = Saver.stringifyDate(new Date(), saver, this);
+
+            int notificationId = 1;
             Intent viewIntent = new Intent(this, MainActivity.class);
             PendingIntent viewPendingIntent =
                     PendingIntent.getActivity(this, 0, viewIntent, 0);
 
             NotificationCompat.BigTextStyle bigStyle = new NotificationCompat.BigTextStyle();
-            bigStyle.bigText(kWalls + "\n\n" + "All Wallets: \t\t" + all + " KST"+"\nLoad at: "+d.toString());
+            kWalls.append("\n")
+                    .append( getString(R.string.allWallets))
+                    .append(": \t\t\t")
+                    .append(all).append(KristAPI.currency)
+                    .append("\n")
+                    .append( getString(R.string.loadAt))
+                    .append(": ").append(dateString)
+                    .append(snapshotDate);
+            bigStyle.bigText( kWalls.toString() );
 
             NotificationCompat.WearableExtender wearableExtender =
                     new NotificationCompat.WearableExtender()
-                            .setHintHideIcon(true)
                             .setBackground(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
+
+            PendingIntent pintent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pSnapShot = PendingIntent.getService(this, 0 , snapshot, PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationCompat.Builder notificationBuilder =
                     new NotificationCompat.Builder(this)
                             .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                             .setSmallIcon(R.mipmap.ic_launcher)
-                            .setContentTitle("Krist Wallets")
-                            .setContentText("All Wallets: \t\t" + all + " KST")
+                            .setContentTitle( getResources().getString(R.string.wallets) )
+                            .setContentText(getString(R.string.allWallets)+": \t\t" + all + KristAPI.currency)
                             .setContentIntent(viewPendingIntent)
                             .setPriority(1)
-                            .addAction(R.drawable.ic_drawer,"Refresh ", pintent)
+                            .addAction(R.mipmap.refresh, getResources().getString(R.string.refresh) , pintent)
+                            .addAction(R.mipmap.snapshot, snapshotTitle, pSnapShot)
                             .extend(wearableExtender)
                             .setStyle(bigStyle);
 
@@ -65,7 +109,7 @@ public class PushService extends IntentService {
 
             notificationManager.notify(notificationId, notificationBuilder.build());
         }
-        catch (Exception e) {
+        catch (Exception ignored) {
         }
 
         stopSelf();

@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import io.github.apemanzilla.kwallet.Address;
+import com.timia2109.kristwallet.util.Address;
 
 public class EconomiconAdapter extends RecyclerView.Adapter<EconomiconAdapter.ApiViewHolder>{
     Address[] addresses;
@@ -22,7 +22,7 @@ public class EconomiconAdapter extends RecyclerView.Adapter<EconomiconAdapter.Ap
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.cv);
             kristID = (TextView) itemView.findViewById(R.id.kristID);
-            kristState = (TextView) itemView.findViewById(R.id.kristState);
+            kristState = (TextView) itemView.findViewById(R.id.kristStateTV);
             date = (TextView) itemView.findViewById(R.id.kristDate);
             itemView.setOnClickListener(onClickListener);
         }
@@ -48,8 +48,8 @@ public class EconomiconAdapter extends RecyclerView.Adapter<EconomiconAdapter.Ap
     @Override
     public void onBindViewHolder(final ApiViewHolder holder, final int i) {
         holder.kristID.setText(addresses[i].getAddress());
-        holder.kristState.setText(addresses[i].getBalance()+" KST");
-        holder.date.setText(addresses[i].getLastSeen().toString());
+        holder.kristState.setText(addresses[i].getBalance()+KristAPI.currency);
+        holder.date.setText(addresses[i].getFirstSeen().toString());
     }
 
     @Override

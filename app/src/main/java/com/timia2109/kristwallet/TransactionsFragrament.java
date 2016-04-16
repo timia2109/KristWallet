@@ -2,26 +2,27 @@ package com.timia2109.kristwallet;
 
 
 import android.content.res.Configuration;
-import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ActionMenuView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import io.github.apemanzilla.kwallet.Transaction;
+import com.timia2109.kristwallet.util.Transactions;
+
 
 public class TransactionsFragrament extends Fragment {
     View myView;
     KristAPI api;
+    Saver saver;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -33,37 +34,44 @@ public class TransactionsFragrament extends Fragment {
             kristID.setText(api.getAddress());
 
             final TextView kristCoins = (TextView) myView.findViewById(R.id.kristCoins);
+            final TextView totalIn = (TextView) myView.findViewById(R.id.totalIn);
+            totalIn.setTextColor(0xFF009900);
+            final TextView totalOut = (TextView) myView.findViewById(R.id.totalOut);
+            totalOut.setTextColor(0xFF990000);
 
-            class LoadBudgetTask extends AsyncTask<String, Long, Long> {
-                protected Long doInBackground(String... in) {
+            final Handler h = new Handler();
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
                     try {
-                        return api.getBalance();
+                        final long b = api.getBalance();
+                        h.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                kristCoins.setText(Long.toString(b)+KristAPI.currency);
+                                totalIn.setText("-> "+api.getTotalin());
+                                totalOut.setText("<- "+api.getTotalout());
+                            }
+                        });
                     } catch (Exception e) {
-                        Toast toast = Toast.makeText(getActivity(), "FAIL TO GET TRANSACTIONS", Toast.LENGTH_LONG);
-                        toast.show();
+                        System.out.println(e.toString());
                     }
-                    return -1l;
                 }
-
-                protected void onPostExecute(Long result) {
-                    kristCoins.setText(result.toString()+" KST");
-                }
-            }
-
-            LoadBudgetTask loadBudgetTask = new LoadBudgetTask();
-            loadBudgetTask.execute("");
-
-            class LoadTransTask extends AsyncTask<String, Long, Transaction[]> {
-                protected Transaction[] doInBackground(String... in) {
+            }).start();
+            
+            class LoadTransTask extends AsyncTask<String, Long, Transactions[]> {
+                protected Transactions[] doInBackground(String... in) {
                     try {
                         return api.getTransactions();
                     } catch (Exception e) {
-
+                        System.out.println(e.toString());
+                        System.exit(0);
                     }
                     return null;
                 }
 
-                protected void onPostExecute(Transaction[] result) {
+                protected void onPostExecute(Transactions[] result) {
                     LinearLayout.LayoutParams p;
                     if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
                         p = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 0.8f);
@@ -82,7 +90,7 @@ public class TransactionsFragrament extends Fragment {
                     LinearLayoutManager mLayoutManager = new LinearLayoutManager(myView.getContext());
                     rv.setLayoutManager(mLayoutManager);
 
-                    TransactionsAdapter adapter = new TransactionsAdapter(result, api);
+                    TransactionsAdapter adapter = new TransactionsAdapter(result, api, saver.dateFormat);
                     rv.setAdapter(adapter);
                 }
             }
@@ -96,5 +104,6 @@ public class TransactionsFragrament extends Fragment {
     public void appendAPI(KristAPI api) {
         this.api = api;
     }
+    public void appendSaver(Saver saver) {this.saver=saver;}
     public TransactionsFragrament getFragrament() {return this;}
 }

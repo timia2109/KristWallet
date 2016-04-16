@@ -2,46 +2,88 @@
 <items version="2" >
 
     <item
-        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\cardview-v7\22.1.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="22886d910315028a2b34b1ba068c265534ade87a">
-        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\pre-dexed\release\classes-3609a2bbb50a8e8e17223e7b1b44b8e7ad7ae24a.jar" />
+        jar="D:\Android sdk\extras\android\m2repository\com\android\support\support-annotations\23.3.0\support-annotations-23.3.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="db7791d75a07fef9844d06236c1c59ba7bf6997c">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-23.3.0_85fdb687d2fa77947a37c8538ab14eb2d3a6820f\classes.dex" />
     </item>
     <item
-        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\22.1.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="e0b0c35d02308b270015a74cada4887e2e49b889">
-        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\pre-dexed\release\classes-44ec2535922a06811b7ad81de451f8a7ac7e4c0e.jar" />
+        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\cardview-v7\23.3.0\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="82ce13fd19cdfde0e392f03c27edeba8d4333648">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-cardview-v7-23.3.0_2355e21c91a82aa673528fc643c7278aa030adda\classes.dex" />
     </item>
     <item
-        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.1.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="c95ba8152923e4872e86a82cfcba9a51c0214328">
-        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\pre-dexed\release\classes-73cead8d34cefdfd0dc2a6d6f3b9f70d554fdc59.jar" />
+        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.3.0\jars\libs\internal_impl-23.3.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="4da5a4d697d32497c6f85567a5112e62fdfd0676">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-23.3.0_3c03a08b04fc56ad69d01d46446747df211e55bd\classes.dex" />
     </item>
     <item
-        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.1.1\jars\libs\internal_impl-22.1.1.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="9e070ad32b2700b0343e8e0cccc437733d91ba3a">
-        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\pre-dexed\release\internal_impl-22.1.1-65c2cbbc55129071d50671cdddea7655454820d8.jar" />
+        jar="C:\Users\Tim\.gradle\caches\modules-2\files-2.1\org.java-websocket\Java-WebSocket\1.3.0\db2658f013fb163de4a99274c2eb9e17efe535d2\Java-WebSocket-1.3.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="db2658f013fb163de4a99274c2eb9e17efe535d2">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\transforms\dex\debug\folders\1000\10\Java-WebSocket-1.3.0_2222b87c70b9cc5dffa3e7dd1edc940abb763c1f\classes.dex" />
     </item>
     <item
-        jar="D:\Android sdk\extras\android\m2repository\com\android\support\support-annotations\22.1.1\support-annotations-22.1.1.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="01d051a6bfb1218b1db2d3a5af0480ac2c25c42a">
-        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\pre-dexed\release\support-annotations-22.1.1-de56e42966f4cfcdf7b11928c0c930fbe2eb604a.jar" />
+        jar="D:\Android Projects\KristWallet\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="20b8992e7bad035d8828ab4799a0b3a9506e9a09">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_0a700303a281fac984c6517e6f77c5556441de80\classes.dex" />
     </item>
     <item
-        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.1.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="a3ff3c506644c820eb2bdf06e8339f72be578551">
-        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\pre-dexed\release\classes-d767bab08eceee9fa75672fb3f47a5371b2e8503.jar" />
+        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\design\23.3.0\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="f0001e71cea6ae432a00021c6f727f5ef0f3d27e">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-design-23.3.0_250793155f2b44a543af1a27e5827e009c14ada4\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.3.0\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="1b8e03daaa43fb0a4cd57e378167c2fd70454c1e">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-23.3.0_fb595665317bbafc833f0fae75d6d94dea56aedf\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android Projects\KristWallet\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="82b7ae2ddd3c995280f561f59b133b1bd3dd66fe">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_1a8f71a70f6820d3d090a4d52459ef732178f15f\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\23.3.0\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="23be6993826b8fd88bbc8d14928bb3b8960d3d4e">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-animated-vector-drawable-23.3.0_26331b1628bc10efbe0ba903ffd37b8e3ac3b650\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.3.0\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="8a034dd16c0dfd75fe86c52c2cd581592acc684a">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-23.3.0_799bc1bf816d64704e9aea2d5e09c1ca61b2e4fc\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\23.3.0\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="a0b5d60246cd9d4f3f2443611b3b4c25265840b5">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-vector-drawable-23.3.0_06fa60e7b212aab98493f83731b0d7396d15c617\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android Projects\KristWallet\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.3.0\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="debf30ce0a7560396b6235edef77e447006454c2">
+        <dex dex="D:\Android Projects\KristWallet\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-recyclerview-v7-23.3.0_6605b55c5e7710e04a11ec512d119699e96dfdca\classes.dex" />
     </item>
 
 </items>

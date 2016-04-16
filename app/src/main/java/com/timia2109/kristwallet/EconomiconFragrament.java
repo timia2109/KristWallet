@@ -11,7 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import io.github.apemanzilla.kwallet.Address;
+import com.timia2109.kristwallet.util.Address;
+
 
 public class EconomiconFragrament extends Fragment {
     View myView;
@@ -45,7 +46,7 @@ public class EconomiconFragrament extends Fragment {
                             TextView t = (TextView) v.findViewById(R.id.kristID);
                             Intent wallet = new Intent(getActivity(), WalletActivity.class);
 
-                            KristAPI k = new KristAPI(MainActivity.bUrl, "");
+                            KristAPI k = new KristAPI("");
                             k.makeViewAddress(t.getText().toString());
                             wallet.putExtra("api",k);
 

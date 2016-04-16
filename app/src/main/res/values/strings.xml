@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KristWallet</string>
+    <string name="app_name">Krist Wallet</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -13,7 +13,87 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_example">Example action</string>
+    <string name="about">About Krist Wallet for Android</string>
+    <string name="googleplus">Join the Google+ Community</string>
+    <string name="updateNotesS">Show Update Notes</string>
+    <string name="updateNotes">Update Notes</string>
+    <string name="wallets">Krist Wallets</string>
+    <string name="refresh">Refresh</string>
+    <string name="snapshot">Save Snapshot</string>
+    <string name="removeSnapshot">Remove Snapshot</string>
+    <string name="snapshotTime">Time of Snapshot: </string>
+    <string name="actionFor">Action for %1$s</string>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <string name="setNameWallet">Set Name for this Wallet</string>
+    <string name="delWallet">Delete Wallet</string>
+    <string name="delAllWallet">Delete all Wallets</string>
+    <string name="addKWallet">Add Krist Wallet</string>
+    <string name="addWallet">Add Wallet</string>
+    <string name="editDateFormat">Edit date String</string>
+    <string name="editDateDesc">Insert your date String <a href="http://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html">(more infos here)</a></string>
+    <string name="send">Send</string>
+    <string name="addDialogMessage">"Insert your Krist Password to connect to connect to a Krist Wallet"</string>
+    <string name="walletAdd">Wallet added!</string>
+    <string name="updateFound">Update found!</string>
+    <string name="updateMessage">"A new version of this App available! Download now?"</string>
+    <string name="del">Delete!</string>
+    <string name="cancel">Cancel</string>
+    <string name="title_activity_url_handler">UrlHandlerActivity</string>
+    <string name="donate">Your have donate!</string>
+    <string name="donateTxt">"Your Address %1$s has send %2$s KST to me, so you donate the developing of that App.\nIf you want, you can write your name in the textfield, so you will be listed as developer.\nIf you don't want let is empty.\n\nBut big thanks to you,\nTim Ittermann (@timia2109)"</string>
+    <string name="shureSend">"Send %1$s KST?"</string>
+    <string name="shureSendCont">"Are you shure that you send %1$s KST from %2$s to %3$s?"</string>
+    <string name="offline">You device is offline! Can\'t access API!</string>
+    <string name="updatePopup">Show update notes</string>
+    <string name="errorLoadData">Error loading Data!</string>
+    <string name="errorSaveData">Error saving Data!</string>
+    <string name="allWallets">All Wallets</string>
+    <string name="loadAt">Load at</string>
+    <string name="noNumber">Your Input is not a vaild number!</string>
+    <string name="sendKstButton">Send %1$s from %2$s to %3$s </string>
+    <string name="sendKstFail">Send Krists failed!</string>
+    <string name="sendKstSuccess">Krists send!</string>
+    <string name="sendKstSuccessContent">Have send %1$s %2$s send from %3$s to %4$s</string>
+    <string name="dialogWalletName">Set Name for %1$s</string>
+    <string name="dialogWalletNameInside">Insert a alias for the Address or leave it blank to delete</string>
+    <string name="dialogYes">Set Name</string>
+    <string name="nameSaved">Name saved!</string>
+    <string name="nameBar">You have %1$s names</string>
+    <string name="nameNew">Buy a name</string>
+    <string name="nameBuy">Buy name</string>
+    <string name="nameBuyHeadSuccess">New Name registred</string>
+    <string name="nameBuyHeadFail">Can\'t buy name</string>
+    <string name="nameBuySuccess">%1$s has buy the name %2$s</string>
+    <string name="nameText">A Name costs %1$n %2$s </string>
+    <string name="webApp">Insert WebApp Address</string>
+    <string name="webAppOpen">Open</string>
+    <string name="webAppInfo">Opens the WebApp in the App
+    WARNING: This App can use JavaScript, so it may can access app data. Try at you own risk!</string>
+    <string name="klotterySend">Sent KSTs</string>
+    <string name="klotteryBG">Run in Backgroud</string>
+    <string name="klotteryNBG">Disable Backgroud</string>
+
+    <!--Fail Messages-->
+    <string name="fail">Error with Request</string>
+    <string name="failWebConnectFail">Can\'t connect to the Krist Server!</string>
+    <string name="failNoLong">The amount of Krists is not a number!</string>
+    <string name="failNotEnoughtKST">You don\'t have enouth KST!</string>
+    <string name="failBadValue">Bad Value!</string>
+    <string name="failInvaildRecipient">Invaild Recipient</string>
+    <string name="failInsufficientFunds">Insufficient Funds!</string>
+    <string name="failSelfSend">You can\'t send yourself Krists!</string>
+    <string name="failEx">Sending faild! Server Message:
+        %1$s</string>
+    <string name="failUpdate">Can\'t check for updates %1$s</string>
+    <string name="failDateFormat">Wrong date format (Not Parseable)</string>
+
+    <string name="welcomeTitle">Welcome to KristWallet for Android! :)</string>
+    <string name="welcomeGo">Let\'s go!</string>
+    <string name="welcomeTxt">Great that you use my little App :)
+    It\'s my first Android App so expect bugs and stuff. But you can help to make it AWESOME :) </string>
+    <string name="welcomeStatics">Are I allowed to send statics to my Server AppVerion and Android Version)
+    This can help to make a better App. And to count the users.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

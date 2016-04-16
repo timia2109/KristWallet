@@ -1,7 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-    <item android:id="@+id/addItem" android:title="Add Krist Wallet"/>
-    <item android:id="@+id/menu_delAll" android:title="Delete all Wallets"/>
-    <item android:id="@+id/menu_about" android:title="About Krist for Android"/>
+    <item android:id="@+id/addItem" android:title="@string/addKWallet"/>
+    <item android:id="@+id/menu_delAll" android:title="@string/delAllWallet"/>
+    <item android:id="@+id/menu_dateFormat" android:title="@string/editDateFormat"/>
+    <item android:id="@+id/menu_googleplus" android:title="@string/googleplus"/>
+    <item android:id="@+id/menu_updateNotes" android:title="@string/updatePopup"/>
+    <item android:id="@+id/menu_about" android:title="@string/about"/>
 </menu>

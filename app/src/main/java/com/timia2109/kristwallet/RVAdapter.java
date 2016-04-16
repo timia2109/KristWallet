@@ -1,22 +1,24 @@
 package com.timia2109.kristwallet;
 
-import android.os.AsyncTask;
+
+import android.os.Handler;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ApiViewHolder>{
-    ArrayList<KristAPI> kristAPIs;
+    KristAPI[] kristAPIs;
     View.OnClickListener onClickListener;
     View.OnLongClickListener onLongClickListener;
+    public long summery = 0;
     public ArrayList<View> views;
+    private int length;
+    private android.support.v7.app.ActionBar ab;
 
     public static class ApiViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
@@ -27,22 +29,24 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ApiViewHolder>{
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.cv);
             kristID = (TextView) itemView.findViewById(R.id.kristID);
-            kristState = (TextView) itemView.findViewById(R.id.kristState);
+            kristState = (TextView) cv.findViewById(R.id.kristStateTV);
             itemView.setOnClickListener(onClickListener);
             itemView.setOnLongClickListener(onLongClickListener);
         }
     }
 
-    public RVAdapter(List<KristAPI> kristAPIs, View.OnClickListener onClickListener, View.OnLongClickListener onLongClickListener){
-        this.kristAPIs = (ArrayList) kristAPIs;
+    public RVAdapter(KristAPI[] kristAPIs, View.OnClickListener onClickListener, View.OnLongClickListener onLongClickListener, android.support.v7.app.ActionBar ab){
+        this.kristAPIs = kristAPIs;
+        length = kristAPIs.length-1;
         this.onClickListener = onClickListener;
         this.onLongClickListener = onLongClickListener;
+        this.ab = ab;
         views = new ArrayList<>();
     }
 
     @Override
     public int getItemCount() {
-        return kristAPIs.size();
+        return kristAPIs.length;
     }
 
     @Override
@@ -55,28 +59,35 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ApiViewHolder>{
 
     @Override
     public void onBindViewHolder(final ApiViewHolder holder, final int i) {
-        holder.kristID.setText(kristAPIs.get(i).getAddress());
+        holder.kristID.setText(kristAPIs[i].getName());
+        final Handler h = new Handler();
 
-        class LoadBudgetTask extends AsyncTask<String, Long, Long> {
-            protected Long doInBackground(String... in) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
                 try {
-                    return kristAPIs.get(i).getBalance();
-                } catch (Exception e) {
+                    final long balance = kristAPIs[i].getBalance();
+                    h.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            holder.kristState.setText(Long.toString(balance) + KristAPI.currency);
+                            summery += balance;
+                            ab.setTitle("Krist Wallet ("+summery+" "+KristAPI.currency+")");
+                        }
+                    });
                 }
-                return -1l;
+                catch (final Exception e) {
+                    System.out.println(e.getClass().getName()+"\t\t"+e.getMessage());
+                    h.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            holder.kristState.setText("Get result FAILED :( !\t"+e.getMessage());
+                        }
+                    });
+                }
             }
-
-            protected void onPostExecute(Long result) {
-                if (result == -1l)
-                    holder.kristState.setText("Get result FAILED!");
-                else
-                    holder.kristState.setText(result.toString()+" KST");
-            }
-        }
-
-        LoadBudgetTask loadBudgetTask = new LoadBudgetTask();
-        loadBudgetTask.execute("");
-
+        });
+        t.start();
     }
 
     @Override

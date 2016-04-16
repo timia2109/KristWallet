@@ -28,13 +28,29 @@
                 android:layout_gravity="center"
                 android:text="0 KST"
                 />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/kristID"
-                android:layout_alignParentRight="true"
-                android:text="PLACEH"
-                />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/kristID"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="5dp"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_toRightOf="@+id/kristID"
+                    android:id="@+id/totalIn"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/totalIn"
+                    android:layout_marginLeft="20dp"
+                    android:id="@+id/totalOut"/>
+            </RelativeLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 

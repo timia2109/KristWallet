@@ -1,5 +1,7 @@
 package com.timia2109.kristwallet;
 
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,36 +9,69 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Settings;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.text.method.LinkMovementMethod;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.timia2109.kristwallet.util.PostData;
+
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
-    static String bUrl = "http://ceriat.net/krist";
-    static String updateGradle = "https://raw.githubusercontent.com/timia2109/KristWallet/master/app/build.gradle";
-    static String updateURL = "https://timia2109.com/kristWallet.apk";
-
     private RecyclerView rv;
     private LinearLayoutManager mLayoutManager;
-    private List<KristAPI> apis;
-    public long lastUpdateCheck;
-    public boolean hasUpdate;
+    private Saver saver;
+    private int versionCode;
+    private android.support.v7.app.ActionBar actionbar;
+    private CharSequence[] longClickOpts;
+    private final int longClickOptsStrings[] = new int[] {
+            R.string.delWallet,
+            R.string.setNameWallet,
+    };
+    public static final DialogInterface.OnClickListener cancelClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            dialog.cancel();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        longClickOpts = new CharSequence[longClickOptsStrings.length];
+        for (int i=0; i<longClickOptsStrings.length;i++) {
+            longClickOpts[i] = getString(longClickOptsStrings[i]);
+        }
+
+        //Debug ID:
+        try {
+            versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
+        } catch (Exception e) {
+            //Never happen, but Java is a diva...
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        actionbar = getSupportActionBar();
+        if (actionbar != null)
+            actionbar.setSubtitle("by timia2109");
 
         rv = (RecyclerView)findViewById(R.id.rv);
         rv.setHasFixedSize(true);
@@ -44,110 +79,147 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(mLayoutManager);
 
-        loadApis();
-
-        Intent intent = new Intent(this, PushService.class);
-        String put = "";
-        int size = apis.size();
-        for (int i = 0; i < size; i++) {
-            put += apis.get(i).getAddress() + ";";
+        if (!HTTP.isOnline(this))
+            alert(getString(R.string.offline), Toast.LENGTH_LONG);
+        else if (saver != null)
+            showAPIs();
+        else {
+            loadApis();
+            if (saver.apis != null && saver.apis.length != 0)
+                sendPush();
         }
-        intent.putExtra("apis", put);
-        startService(intent);
-
     }
 
     @Override
     public void onBackPressed() {
+        saver.save(this);
         finish();
     }
 
-    protected void saveAll() {
-        String put = ""; //Addresses
-        String put2 = ""; //Passwords
-        for (int i=0; i<apis.size();i++) {
-            put += apis.get(i).getAddress()+";";
-            put2 += apis.get(i).getRawKey()+";";
-        }
-
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("addresses", put);
-        editor.putString("keys", put2);
-        editor.putBoolean("hasUpdate", hasUpdate);
-        editor.putLong("lastUpdate", lastUpdateCheck);
-        editor.commit();
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (!saver.isSaved)
+            saver.save(this);
     }
 
     private void loadApis() {
-        apis = new ArrayList<>();
+        if (Saver.hasSaver(getApplicationContext())) {
+            saver = Saver.load(getApplicationContext());
+            if (saver == null) {
+                alert("Error LOADING DATA");
+                System.exit(0);
+            }
 
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        hasUpdate = sharedPref.getBoolean("hasUpdate", false);
-        lastUpdateCheck = sharedPref.getLong("lastUpdate", 0);
-
-        String load = sharedPref.getString("keys", "");
-        if (load == "") {
-            addWalletDialog();
-        }
-        else {
-            String[] lU = load.split(";");
-            for (int i = 0; i < lU.length; i++) {
-                KristAPI k = new KristAPI(bUrl, lU[i]);
-                //Add for User
-                apis.add(k);
+            if (saver.lastVCode != versionCode) {
+                afterUpdate();
+                saver.lastVCode = versionCode;
+                saver.nosave();
             }
         }
+        else
+            updateData();
+
         showAPIs();
         update();
     }
 
     private void showAPIs() {
         View.OnClickListener onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextView t = (TextView) v.findViewById(R.id.kristID);
-                Intent wallet = new Intent(getActivity(), WalletActivity.class);
-
-                for (int i=0;i<apis.size();i++) {
-                    if (apis.get(i).getAddress().equals(t.getText().toString())) {
-                        wallet.putExtra("api",apis.get(i));
-                        wallet.putExtra("apis", (ArrayList<KristAPI>) apis);
-                        break;
+                @Override
+                public void onClick(View v) {
+                    TextView t = (TextView) v.findViewById(R.id.kristID);
+                    Intent wallet = new Intent(getActivity(), WalletActivity.class);
+                    for (int i=0;i<saver.apis.length;i++) {
+                        if (saver.apis[i].getName().equals(t.getText().toString())) {
+                            wallet.putExtra("api", saver.apis[i]);
+                            break;
+                        }
                     }
+                    wallet.putExtra("apis", saver.apis);
+                    wallet.putExtra("saver", saver);
+                    startActivity(wallet);
+                    getActivity().finish();
                 }
+            };
 
-                startActivity(wallet);
-                getActivity().finish();
-            }
-        };
+            View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(final View v) {
+                    TextView t = (TextView) v.findViewById(R.id.kristID);
 
-        View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Delete Wallet");
-                final TextView t = (TextView) v.findViewById(R.id.kristID);
-                builder.setMessage("Delete Wallet: "+t.getText());
-                builder.setPositiveButton("Delete!", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        removeWallet(t.getText().toString());
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.show();
-                return false;
-            }
-        };
+                    final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+                    builder.setTitle(getString(R.string.actionFor, t.getText()));
+                    builder.setItems(longClickOpts, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            AlertDialog.Builder builder=null;
+                            final String address = ((TextView) v.findViewById(R.id.kristID)).getText().toString();
+                            switch (which) {
+                                case 0:
+                                    builder = new AlertDialog.Builder(getActivity());
+                                    builder.setTitle(R.string.delWallet);
+                                    builder.setMessage(getString(R.string.delWallet) + ": " +address);
+                                    builder.setPositiveButton(R.string.del, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            saver.removeAPI(address);
+                                            showAPIs();
+                                        }
+                                    });
+                                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                                    break;
+                                case 1:
+                                    builder = new AlertDialog.Builder(getActivity());
+                                    builder.setTitle(R.string.delWallet);
+                                    builder.setMessage(getString(R.string.dialogWalletName, address));
+                                    final EditText input = new EditText(getActivity());
+                                    builder.setView(input);
+                                    builder.setPositiveButton(R.string.dialogYes, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String inputString = input.getText().toString();
+                                            for (int i=0; i<saver.apis.length; i++) {
+                                                if (saver.apis[i].getName().equals(address)) {
+                                                    if (inputString.equals(""))
+                                                        saver.apis[i].setAlias();
+                                                    else
+                                                        saver.apis[i].setAlias(inputString);
+                                                    saver.isSaved = false;
+                                                    Snackbar.make(v, getString(R.string.nameSaved), Snackbar.LENGTH_SHORT).show();
+                                                    break;
+                                                }
+                                            }
+                                            showAPIs();
+                                            sendPush();
+                                        }
+                                    });
+                                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                                    break;
+                            }
+                            if (builder != null)
+                                builder.show();
+                        }
+                    });
+                    builder.show();
 
-        RVAdapter adapter = new RVAdapter(apis, onClickListener, onLongClickListener);
-        rv.setAdapter(adapter);
+                    return false;
+                }
+            };
+
+            RVAdapter adapter = new RVAdapter(saver.apis, onClickListener, onLongClickListener, actionbar);
+            rv.setAdapter(adapter);
+
     }
 
     @Override
@@ -158,71 +230,41 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.addItem:
-                addWalletDialog();
-                return true;
-            case R.id.menu_delAll:
-                apis = new ArrayList<>();
-                showAPIs();
-                saveAll();
-                addWalletDialog();
-                return true;
-            case R.id.menu_about:
-                //Show about
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return optionsItemSelected(item,this);
     }
 
     public MainActivity getActivity() {
         return this;
     }
 
-    public void addWallet(String password) {
-        apis.add(new KristAPI(bUrl, password));
-        saveAll();
-    }
-
     public void addWallet(String password, boolean refreshUI) {
-        addWallet(password);
+        saver.appendAPI(new KristAPI(password));
+        //saveAll();
         showAPIs();
-    }
-
-    public void removeWallet(String address) {
-        int size = apis.size();
-        for (int i=0;i<size;i++) {
-            if (apis.get(i).getAddress().equals(address)) {
-                apis.remove(i);
-                saveAll();
-                loadApis();
-                break;
-            }
-        }
+        sendPush();
     }
 
     public void addWalletDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Add Krist Wallet");
-        builder.setMessage("Insert your Krist Password or a Krist ID to connect to connect to a Krist Wallet");
+        builder.setTitle(R.string.addKWallet);
+        builder.setMessage(R.string.addDialogMessage);
         final EditText key = new EditText(this);
+        key.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         key.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
         builder.setView(key);
-        builder.setPositiveButton("Add Wallet", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.addWallet, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //String val = id.getText().toString();
                 addWallet(key.getText().toString(), true);
-                alert("Wallet added!", Toast.LENGTH_SHORT);
+                alert(getString(R.string.walletAdd), Toast.LENGTH_SHORT);
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (apis == null) {
+                if (saver.apis == null) {
                     onStop();
                 }
                 dialog.cancel();
@@ -233,80 +275,172 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void alert(String message, int length) {
-        //length = Toast.LENGTH_SHORT || ...LENGTH_LONG
-        Toast toast = Toast.makeText(getApplicationContext(), message, length);
-        toast.show();
+        Toast.makeText(getApplicationContext(), message, length).show();
+    }
+
+    public void alert(String message) {
+        alert(message, Toast.LENGTH_SHORT);
     }
 
     private void update() {
-        class LoadBudgetTask extends AsyncTask<String, Boolean, Boolean> {
-            protected Boolean doInBackground(String... in) {
+        final Handler handler = new Handler();
+        final PostData pd = new PostData();
+        if (saver.allowStatics) {
+            pd.put("sdkV", Integer.toString(Build.VERSION.SDK_INT))
+                    .put("did", Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
                 try {
-                    try {
-                        String r = HTTP.readURL(updateGradle);
-                        String seek = "versionCode";
-                        int pos = r.indexOf(seek);
-                        String v = "";
-                        int i = pos+seek.length()+1;
-                        while (r.charAt(i) != '\n' && r.charAt(i) != ' ') {
-                            v+=r.charAt(i);
-                            i++;
+                    String response = HTTP.postURL(HTTP.UPDATE_URL+"?appV="+versionCode, pd);
+                    JSONObject resp = new JSONObject(response);
+                    saver.setWebApps(resp.getJSONArray("webApps"));
+                    if (resp.getBoolean("update")) {
+                        saver.hasUpdate = true;
+                        final String toVersion = resp.getString("toVersion");
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                showUpdateModal(toVersion);
+                            }
+                        });
+                    }
+                    saver.lastUpdate = System.currentTimeMillis() / 1000L;
+                    saver.nosave();
+                }
+                catch (final Exception e) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            alert(getString(R.string.failUpdate, e.getMessage()));
                         }
-                        return (getPackageManager().getPackageInfo(getPackageName(),0).versionCode < Integer.parseInt(v));
-                    } catch (Exception e) {
-                        System.out.println(e);
-                    }
-                } catch (Exception e) {
-
-                }
-                return null;
-            }
-
-            protected void onPostExecute(Boolean result) {
-                if (result != null) {
-                    if (result.equals(true)) {
-                        showUpdateModal();
-                    }
-                    hasUpdate = false;
-                    lastUpdateCheck = System.currentTimeMillis() / 1000L;
-                    saveAll();
+                    });
                 }
             }
-        }
-
-        if (hasUpdate)
-            showUpdateModal();
-        else if (lastUpdateCheck < (System.currentTimeMillis() / 1000L) + 60*60*48) {
-            LoadBudgetTask loadBudgetTask = new LoadBudgetTask();
-            loadBudgetTask.execute("");
-        }
+        }).start();
     }
 
-    private void showUpdateModal() {
+    private void showUpdateModal(final String toVersion) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Update found!");
-        builder.setMessage("A new version of this App available! Download now?");
+        builder.setTitle(getString(R.string.updateFound));
+        builder.setMessage(getString(R.string.updateMessage));
 
-        builder.setPositiveButton("Add Wallet", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Download v"+toVersion+" APK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                hasUpdate = false;
-                saveAll();
+                saver.hasUpdate = false;
+                saver.nosave();
+                //saveAll();
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(updateURL));
+                intent.setData(Uri.parse(HTTP.getUpdateURL(toVersion)));
                 startActivity(intent);
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                hasUpdate = true;
-                saveAll();
-                dialog.cancel();
-            }
-        });
+        builder.setNegativeButton(getString(R.string.cancel), cancelClickListener);
 
         builder.show();
     }
 
+    public static void updateNotes(final Context context) {
+        final android.os.Handler h = new android.os.Handler();
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String notes = HTTP.getUpdateNotes();
+                h.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setTitle("Update Notes");
+                        builder.setMessage(notes);
+                        builder.show();
+                    }
+                });
+            }
+        });
+        t.start();
+    }
+
+    private void afterUpdate() {
+        updateNotes(this);
+    }
+
+    private void sendPush() {
+        Intent intent = new Intent(this, PushService.class);
+        intent.putExtra("saver", saver);
+        startService(intent);
+    }
+
+    private void updateData() {
+        //System.out.println("Dev Dev: \t"+Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+        android.support.v7.app.AlertDialog.Builder welcomeMessage = new android.support.v7.app.AlertDialog.Builder(this);
+        welcomeMessage.setTitle(R.string.welcomeTitle);
+        final LinearLayout welcomeView = (LinearLayout) LayoutInflater.from(welcomeMessage.getContext()).inflate(R.layout.welcome_alert, null);
+        welcomeMessage.setView(welcomeView);
+        welcomeMessage.setPositiveButton(R.string.welcomeGo,new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which){
+                saver.allowStatics = ((CheckBox) welcomeView.findViewById(R.id.staticsBox)).isChecked();
+                dialog.cancel();
+                addWalletDialog();
+            }
+        });
+        welcomeMessage.show();
+
+        saver = new Saver();
+        saver.hasUpdate  = false;
+        saver.lastUpdate = 0;
+        saver.lastVCode = 0;
+        saver.nosave();
+    }
+
+    public static boolean optionsItemSelected(MenuItem item,final Activity ac) {
+        Intent i;
+        switch (item.getItemId()) {
+            case R.id.addItem:
+                ((MainActivity)ac).addWalletDialog();
+                return true;
+            case R.id.menu_delAll:
+                ((MainActivity)ac).saver.apis = new KristAPI[0];
+                ((MainActivity)ac).showAPIs();
+                //saveAll();
+                ((MainActivity)ac).addWalletDialog();
+                return true;
+            case R.id.menu_googleplus:
+                i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse( "https://plus.google.com/u/0/communities/110417735196001201854" ));
+                ac.startActivity(i);
+                return true;
+            case R.id.menu_updateNotes:
+                MainActivity.updateNotes(ac);
+                return true;
+            case R.id.menu_about:
+                i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse( "https://github.com/timia2109/KristWallet/blob/master/README.md" ));
+                ac.startActivity(i);
+                return true;
+            case R.id.menu_dateFormat:
+                AlertDialog.Builder builder = new AlertDialog.Builder(ac);
+                builder.setTitle(R.string.editDateFormat);
+                LayoutInflater inflater = LayoutInflater.from(ac);
+                LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.dateformat_alert, null);
+                ((TextView)layout.findViewById(R.id.textViewDateFormat)).setText(R.string.editDateDesc);
+                ((TextView)layout.findViewById(R.id.textViewDateFormat)).setMovementMethod(LinkMovementMethod.getInstance());
+                final EditText input = (EditText) layout.findViewById(R.id.dateformat);
+                input.setText(((MainActivity)ac).saver.dateFormat);
+                builder.setView(layout);
+                builder.setPositiveButton(R.string.editDateFormat, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ((MainActivity)ac).saver.dateFormat = input.getText().toString();
+                        ((MainActivity)ac).saver.nosave();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, cancelClickListener);
+                builder.show();
+                break;
+        }
+        return false;
+    }
 }

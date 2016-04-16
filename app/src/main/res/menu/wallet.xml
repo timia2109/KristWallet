@@ -4,4 +4,7 @@
     tools:context="com.timia2109.kristwallet.WalletActivity">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/menu_googleplus" android:title="@string/googleplus"/>
+    <item android:id="@+id/menu_updateNotes" android:title="@string/updateNotesS"/>
+    <item android:id="@+id/menu_about" android:title="@string/about"/>
 </menu>

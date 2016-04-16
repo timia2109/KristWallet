@@ -1,22 +1,24 @@
 package com.timia2109.kristwallet;
 
-import android.graphics.Color;
-import android.os.AsyncTask;
+
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.timia2109.kristwallet.util.Transactions;
 
-import io.github.apemanzilla.kwallet.Transaction;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapter.TransViewHolder>{
-    Transaction[] transactions;
+    Transactions[] transactions;
     String myAddress;
+    SimpleDateFormat dateFormat;
 
     public static class TransViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
@@ -28,14 +30,17 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.cv);
             kristID = (TextView) itemView.findViewById(R.id.kristID);
-            kristState = (TextView) itemView.findViewById(R.id.kristState);
+            kristState = (TextView) itemView.findViewById(R.id.kristStateTV);
             date = (TextView) itemView.findViewById(R.id.kristDate);
         }
     }
 
-    public TransactionsAdapter(Transaction[] ptransactions, final KristAPI api){
+    public TransactionsAdapter(Transactions[] ptransactions, final KristAPI api, String dateFormat){
         this.transactions = ptransactions;
         this.myAddress = api.getAddress();
+        try {
+            this.dateFormat = new SimpleDateFormat(dateFormat, Locale.US);
+        } catch (IllegalArgumentException ignored) {}
     }
 
     @Override
@@ -52,26 +57,35 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
 
     @Override
     public void onBindViewHolder(final TransViewHolder holder, final int i) {
-        int color;
-        if (transactions[i].isMined()) {
+        int color = 0x9900FF00;
+        if (transactions[i].isMined())
             holder.kristID.setText("Mined!");
-            color = Color.GREEN;
-        }
         else {
-            String info = ((transactions[i].plus()) ? "-> " : "<- ");
-            holder.kristID.setText(info+transactions[i].getAddr());
-            if (transactions[i].plus())
-                color = Color.GREEN;
-            else
-                color = Color.RED;
+            boolean incomming = transactions[i].getToAddr().equals(myAddress);
+            String info = ((incomming ) ? "-> "+transactions[i].getFromAddr() : "<- "+transactions[i].getToAddr());
+            holder.kristID.setText(info);
+            holder.kristID.setTextSize(TypedValue.COMPLEX_UNIT_SP,20);
+            if (!incomming)
+                color = 0x99FF0000;
         }
-        holder.kristID.setTextColor(color);
+        holder.cv.setBackgroundColor(color);
 
         Long amount = transactions[i].getAmount();
-        holder.kristState.setText(amount.toString());
+        holder.kristState.setTextSize(TypedValue.COMPLEX_UNIT_SP,30);
 
-        holder.date.setText(transactions[i].getTime().toLocaleString());
+        holder.kristState.setText(amount.toString()+" KST");
 
+        Date date = transactions[i].getTime();
+        String meta = transactions[i].getMetadata();
+        String dateS;
+        if (dateFormat == null)
+            dateS = "Wrong date format!";
+        else
+            dateS = dateFormat.format(date);
+        if (meta != null)
+            holder.date.setText( dateS+"\n"+meta );
+        else
+            holder.date.setText( dateS );
     }
 
     @Override

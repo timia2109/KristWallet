@@ -1,23 +1,19 @@
 package com.timia2109.kristwallet;
 
-import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
+import android.widget.EditText;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import com.timia2109.kristwallet.KLottery.KLotteryFragment;
 
 public class WalletActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -33,7 +29,9 @@ public class WalletActivity extends AppCompatActivity
      */
     private CharSequence mTitle;
     KristAPI useAPI;
-    ArrayList<KristAPI> apis;
+    KristAPI[] apis;
+    Saver saver;
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +39,15 @@ public class WalletActivity extends AppCompatActivity
         setContentView(R.layout.activity_wallet);
 
         //Get KristAPI
-        Intent intent = getIntent();
+        intent = getIntent();
+
         useAPI = (KristAPI) intent.getSerializableExtra("api");
-        apis = (ArrayList<KristAPI>) intent.getSerializableExtra("apis");
+        apis = (KristAPI[]) intent.getSerializableExtra("apis");
+        saver = (Saver) intent.getSerializableExtra("saver");
+        if (saver == null) {
+            saver = Saver.load(this);
+            apis = saver.apis;
+        }
 
         if (useAPI == null) onBackPressed();
 
@@ -56,16 +60,23 @@ public class WalletActivity extends AppCompatActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        onNavigationDrawerItemSelected(0);
+        if (intent.hasExtra("sendTo")) {
+            SendKristFragrament.preTo = intent.getStringExtra("sendTo");
+            onNavigationDrawerItemSelected(2);
+        }
+        else
+            onNavigationDrawerItemSelected(0);
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
+        boolean handled = false;
         switch (position) {
             case 0:
                 TransactionsFragrament u = new TransactionsFragrament();
                 u.appendAPI(useAPI);
+                u.appendSaver(saver);
                 startNow = u;
                 break;
             case 1:
@@ -74,19 +85,38 @@ public class WalletActivity extends AppCompatActivity
                 startNow = u2;
                 break;
             case 2:
-                SendKristFragrament u3 = new SendKristFragrament();
-                u3.setAPIs(apis);
-                startNow = u3;
+                if (useAPI.isFullAPI()) {
+                    SendKristFragrament u3 = new SendKristFragrament();
+                    u3.setAPIs(apis, useAPI);
+                    startNow = u3;
+                }
+                break;
+            case 3:
+                KSTNameFragment u4 = new KSTNameFragment();
+                u4.appendAPI(useAPI);
+                startNow = u4;
+                break;
+            case 4:
+                startNow = new KLotteryFragment();
+                break;
+            case 5:
+                handled = webApp();
                 break;
             default:
-                startNow = new TransactionsFragrament();
+                if (position > 5) {
+                    handled = openWebApp( saver.webApps[position-6] );
+                }
+                else
+                    startNow = new TransactionsFragrament();
                 break;
         }
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, startNow);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        if (!handled) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.container, startNow);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
     }
 
     public void restoreActionBar() {
@@ -112,17 +142,8 @@ public class WalletActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
+        //return MainActivity.optionsItemSelected(item, this);
     }
 
     public void onBackPressed() {
@@ -130,7 +151,46 @@ public class WalletActivity extends AppCompatActivity
         finish();
     }
 
-    public WalletActivity getActivity() {
-        return this;
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (saver != null)
+            saver.save(this);
+        else if (Saver.load() != null)
+            Saver.load().save(this);
+    }
+
+    private boolean openWebApp(String url) {
+        Intent sintent = new Intent(this, WebViewActivty.class);
+        sintent.putExtras(getIntent().getExtras());
+        sintent.putExtra("url", url);
+        startActivity(sintent);
+        return true;
+    }
+
+    private boolean webApp() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle(R.string.webApp);
+        builder.setMessage(R.string.webAppInfo);
+        final EditText url = new EditText(this);
+        url.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        url.setText(saver.lastWebApp);
+        builder.setView(url);
+        builder.setPositiveButton(R.string.webAppOpen, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                saver.lastWebApp = url.getText().toString();
+                saver.nosave();
+                openWebApp(url.getText().toString());
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+        return true;
     }
 }

@@ -22,6 +22,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
@@ -53,6 +56,14 @@ public class NavigationDrawerFragment extends Fragment {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
     private View mFragmentContainerView;
+    public String[] menuItems = new String[]{
+            "Transactions",
+            "Economicon",
+            "Transfer",
+            "Names",
+            "KLottery",
+            "WebApp"
+    };
 
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
@@ -89,6 +100,14 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Saver s = Saver.load();
+        if (s != null) {
+            ArrayList<String> menuPlus = new ArrayList<>(Arrays.asList(menuItems));
+            for (int i=0; i<s.webAppNames.length; i++) {
+                menuPlus.add(s.webAppNames[i]);
+            }
+            menuItems = menuPlus.toArray(new String[menuPlus.size()]);
+        }
         mDrawerListView = (ListView) inflater.inflate(
                 R.layout.fragment_navigation_drawer, container, false);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -100,12 +119,7 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_1,
-                android.R.id.text1,
-                new String[]{
-                        "Transactions",
-                        "Economicon",
-                        "Transfer"
-                }));
+                android.R.id.text1, menuItems));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
     }
