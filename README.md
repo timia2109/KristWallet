@@ -1,5 +1,5 @@
 # KristWallet
-A Krist Wallet for Android **[Download Here!](https://github.com/timia2109/KristWallet/releases/download/v1.2/app-debug.apk)**
+A Krist Wallet for Android **[Download Here!](https://github.com/timia2109/KristWallet/releases/download/v1.2/KristWallet.apk)**
 
 
 **[Be part of the Community on Google+](https://plus.google.com/communities/110417735196001201854)**
