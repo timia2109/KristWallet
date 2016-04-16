@@ -1,6 +1,6 @@
 # KristWallet
 ### Please delete the App, before you install the new version! (Also from v1.2 to v1.2.1) (Data changes, APK signated)
-A Krist Wallet for Android **[Download Here!](https://github.com/timia2109/KristWallet/releases/download/v1.2/KristWallet.apk)**
+A Krist Wallet for Android **[Download Here!](https://github.com/timia2109/KristWallet/releases/download/v1.2.1/KristWallet.apk)**
 
 
 **[Be part of the Community on Google+](https://plus.google.com/communities/110417735196001201854)**
