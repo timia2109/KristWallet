@@ -82,6 +82,7 @@ public class WalletActivity extends AppCompatActivity
             case 1:
                 EconomiconFragrament u2 = new EconomiconFragrament();
                 u2.appendAPI(useAPI);
+                u2.appendSaver(saver);
                 startNow = u2;
                 break;
             case 2:

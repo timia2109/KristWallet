@@ -13,10 +13,13 @@ import android.widget.TextView;
 
 import com.timia2109.kristwallet.util.Address;
 
+import java.text.SimpleDateFormat;
+
 
 public class EconomiconFragrament extends Fragment {
     View myView;
     KristAPI api;
+    Saver saver;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,7 +58,7 @@ public class EconomiconFragrament extends Fragment {
                         }
                     };
 
-                    EconomiconAdapter adapter = new EconomiconAdapter(result, onClickListener);
+                    EconomiconAdapter adapter = new EconomiconAdapter(result, onClickListener, saver.dateFormat, getContext());
                     rv.setAdapter(adapter);
                 }
             }
@@ -68,4 +71,5 @@ public class EconomiconFragrament extends Fragment {
     public void appendAPI(KristAPI pAPI) {
         api = pAPI;
     }
+    public void appendSaver(Saver s) {saver=s;}
 }

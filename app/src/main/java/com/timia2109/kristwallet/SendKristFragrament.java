@@ -23,7 +23,7 @@ public class SendKristFragrament extends Fragment {
     int apiPointer, targetPointer;
     Button walletChooser, send;
     ImageButton chooseTarget;
-    EditText kristAns, kristTaget;
+    EditText kristAns, kristTaget, kristMeta;
     public static String preTo;
 
     @Override
@@ -40,6 +40,7 @@ public class SendKristFragrament extends Fragment {
             kristTaget.setText(preTo);
         else
             kristTaget.setText(KristAPI.donateAddress);
+        kristMeta = (EditText) myView.findViewById(R.id.kristMetaEdit);
 
         View.OnClickListener chooseAPI = new View.OnClickListener() {
             @Override
@@ -96,7 +97,7 @@ public class SendKristFragrament extends Fragment {
                         long ans = 0;
                         try {
                             ans = Long.parseLong(kristAns.getText().toString());
-                            new KristSender(ans, kristTaget.getText().toString(), apis[apiPointer], null, getContext()).start();
+                            new KristSender(ans, kristTaget.getText().toString(), apis[apiPointer], kristMeta.getText().toString(), getContext()).start();
                         } catch (NumberFormatException e) {
                             Toast.makeText(getContext(), getString(R.string.noNumber), Toast.LENGTH_SHORT).show();
                         }

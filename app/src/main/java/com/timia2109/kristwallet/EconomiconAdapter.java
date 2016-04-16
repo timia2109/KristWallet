@@ -1,5 +1,6 @@
 package com.timia2109.kristwallet;
 
+import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,6 +13,8 @@ import com.timia2109.kristwallet.util.Address;
 public class EconomiconAdapter extends RecyclerView.Adapter<EconomiconAdapter.ApiViewHolder>{
     Address[] addresses;
     View.OnClickListener onClickListener;
+    String dateFormat;
+    Context context;
 
     public static class ApiViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
@@ -28,9 +31,11 @@ public class EconomiconAdapter extends RecyclerView.Adapter<EconomiconAdapter.Ap
         }
     }
 
-    public EconomiconAdapter(Address[] pAddresses, View.OnClickListener onClickListener){
+    public EconomiconAdapter(Address[] pAddresses, View.OnClickListener onClickListener, String dateFormat, Context c){
         this.onClickListener = onClickListener;
         this.addresses = pAddresses;
+        this.dateFormat = dateFormat;
+        context = c;
     }
 
     @Override
@@ -49,7 +54,7 @@ public class EconomiconAdapter extends RecyclerView.Adapter<EconomiconAdapter.Ap
     public void onBindViewHolder(final ApiViewHolder holder, final int i) {
         holder.kristID.setText(addresses[i].getAddress());
         holder.kristState.setText(addresses[i].getBalance()+KristAPI.currency);
-        holder.date.setText(addresses[i].getFirstSeen().toString());
+        holder.date.setText( Saver.stringifyDate(addresses[i].getFirstSeen(), dateFormat, context));
     }
 
     @Override

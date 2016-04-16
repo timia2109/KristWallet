@@ -3,7 +3,6 @@ package com.timia2109.kristwallet.util;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 
 import com.timia2109.kristwallet.KristAPI;
 import com.timia2109.kristwallet.R;
-import com.timia2109.kristwallet.WebViewActivty;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,7 +46,7 @@ public class JavaScriptAPI {
 
         class TransactionDataHolder {
             String address, metadata;
-            long amount;
+            long amount=1;
             boolean canEdit=true;
         }
 
@@ -137,7 +135,8 @@ public class JavaScriptAPI {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                webView.post(new SendKSTResult(false, null, webView));
+                if (webView != null)
+                    webView.post(new SendKSTResult(false, null, webView));
             }
         });
         builder.show();

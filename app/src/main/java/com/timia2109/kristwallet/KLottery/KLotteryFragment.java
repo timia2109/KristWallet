@@ -2,7 +2,6 @@ package com.timia2109.kristwallet.KLottery;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.timia2109.kristwallet.KristAPI;
 import com.timia2109.kristwallet.R;
@@ -44,6 +44,7 @@ public class KLotteryFragment extends Fragment {
     RecyclerView recyclerView;
     String addr;
     MyCount count;
+    JavaScriptAPI jsa;
 
 
     public KLotteryFragment() {
@@ -59,6 +60,7 @@ public class KLotteryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
+        jsa = new JavaScriptAPI(getActivity());
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_klottery, container, false);
         sendKrist = (Button) view.findViewById(R.id.sendButton);
@@ -71,7 +73,6 @@ public class KLotteryFragment extends Fragment {
         sendKrist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                JavaScriptAPI jsa = new JavaScriptAPI(getActivity());
                 jsa.sendKrist(addr);
             }
         });
@@ -91,6 +92,7 @@ public class KLotteryFragment extends Fragment {
         if (mWebSocketClient != null)
             mWebSocketClient.close();
     }
+
 
     @Override
     public void onDestroy() {
@@ -151,18 +153,18 @@ public class KLotteryFragment extends Fragment {
                         });
                     }
                 } catch (Exception e) {
-                    Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_SHORT);
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onClose(int i, String s, boolean b) {
-                Snackbar.make(view, "Connection closed", Snackbar.LENGTH_SHORT);
+                Toast.makeText(getContext(), "Connection closed", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(Exception e) {
-                Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_SHORT);
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
         mWebSocketClient.connect();
@@ -226,7 +228,7 @@ public class KLotteryFragment extends Fragment {
                     put.put("val", usersRaw.getLong(key));
                     users.add(put);
                 } catch (JSONException e) {
-                    Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_SHORT);
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
             Collections.sort(users, new Comparator<JSONObject>() {

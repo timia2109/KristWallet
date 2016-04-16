@@ -70,6 +70,7 @@
     <string name="webAppInfo">Opens the WebApp in the App
     WARNING: This App can use JavaScript, so it may can access app data. Try at you own risk!</string>
     <string name="klotterySend">Sent KSTs</string>
+    <string name="metadata">Metadata</string>
     <string name="klotteryBG">Run in Backgroud</string>
     <string name="klotteryNBG">Disable Backgroud</string>
 

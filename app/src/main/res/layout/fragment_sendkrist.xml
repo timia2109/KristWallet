@@ -55,6 +55,17 @@
          />
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/metadata"
+        android:layout_gravity="center_horizontal"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/kristMetaEdit"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dip"
